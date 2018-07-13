@@ -60,3 +60,5 @@ app.listen(3000, () => {
 //},(e) => {
 //         console.log('Unable to connect');        
 //});
+
+module.exports = {app};
