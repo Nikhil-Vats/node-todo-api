@@ -1,3 +1,4 @@
+const _ =require('lodash'); //provides utility fns like pick
 var express = require('express');
 var bodyParser = require('body-parser');
 var {ObjectID} = require('mongodb');
@@ -62,6 +63,32 @@ app.delete('/todos/:id',(req,res) => {
         }
         res.send({todo});
     }).catch((e) => {
+        res.status(400).send();
+    });
+});
+
+app.patch('/todos/:id',(req,res) => {
+   var id = req.params.id;
+    var body = _.pick(req.body, ['text','completed']);
+//body will store the properties we allow user to update 
+    if(!ObjectID.isValid(id))   {
+    return res.status(404).send();
+    }
+    if(_.isBoolean(body.completed) && body.completed) {
+        body.completedAt = new Date().getTime();
+    } else {
+        body.completed = false;
+        body.completedAt = null;
+        //if we want to remove a property from database set it to null
+    }
+    
+    Todo.findByIdAndUpdate(id, {$set: body}, {new:true}).then((todo) => {
+        //new is same as returnOriginal same in mongoose-update, it means return the new object
+        if(!todo) {
+            return res.status(404).send();
+        }
+        res.send({todo});
+    }).catch((e) =>   {
         res.status(400).send();
     });
 });
