@@ -1,7 +1,10 @@
 var mongoose = require('mongoose');
 
 mongoose.promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI||
-'mongodb://localhost:27017/TodoApp');
+mongoose.connect(process.env.MONGODB_URI);
 
 module.exports = {mongoose};
+
+//process.env.NODE_ENV === 'production' for heroku
+//process.env.NODE_ENV === 'developmen' for local
+//process.env.NODE_ENV === 'test' for mocha
