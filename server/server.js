@@ -8,7 +8,7 @@ var {ObjectID} = require('mongodb');
 var {mongoose} = require('./db/mongoose.js');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/users');
-
+var {authenticate} = require('./middleware/authenticate');
 var app = express();
 const port = process.env.PORT||3000;
 
@@ -102,9 +102,36 @@ app.post('/users',(req,res) =>{
        return user.generateAuthToken();
         //res.send(user);
     }).then((token) => {
+        //header contains key value pair key name is x-auth when we add x- before key it means it is not default we add it and token is its value
         res.header(`x-auth`,token).send(user);
     }).catch((e) => {
         res.status(400).send(e);
+    });
+});
+
+var authenticate = (req,res,next) => {
+   var token = req.header('x-auth'); 
+    User.findByToken(token).then((user) => {
+        if(!user) {
+            return Promise.reject();
+        }
+        req.user = user;
+        req.token = token;
+        next();
+    }).catch((e) => {
+        res.status(401).send();
+    }); 
+};
+
+app.get('/users/me',authenticate, (req,res) => {
+   var token = req.header('x-auth'); 
+    User.findByToken(token).then((user) => {
+        if(!user) {
+            return Promise.reject();
+        }
+        res.send(user);
+    }).catch((e) => {
+        res.status(401).send();
     });
 });
 
