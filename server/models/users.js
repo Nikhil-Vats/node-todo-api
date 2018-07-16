@@ -75,6 +75,25 @@ return User.findOne({
     'tokens.access':'auth'
 });
 };
+UserSchema.statics.findByCredentials = function (email,password) {
+    var User = this;
+    return User.findOne({email}).then((user) => {
+        if(!user) {
+            return Promise.reject();
+        }
+//all of the bcrypt methods support callbacks not promises
+       return new Promise((resolve,reject) => {
+          bcrypt.compare(password,user.password,(err,res) => {
+            if(res) {
+                resolve(user);
+            }  else {
+                reject();
+            }
+             
+          }); 
+       }); 
+    });
+};
 //first arg is save means because save fn this fn is executed, next is a must to call so that after this the main fn works
 UserSchema.pre('save',function(next) {
         var user = this;
