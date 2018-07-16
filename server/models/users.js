@@ -26,7 +26,7 @@ var UserSchema = new mongoose.Schema({
             type:String,
             require:true
         },
-        tokens: {
+        token: {
             
             type:String,
             require:true
@@ -69,7 +69,7 @@ UserSchema.statics.findByToken = function (token)  {
 return User.findOne({
    '_id':decoded._id,
     //wrap in '' for nested value like token and access in tokens
-    'tokens.token': taken,
+    'tokens.token': token,
     'tokens.access':'auth'
 });
 };
