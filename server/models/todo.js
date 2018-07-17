@@ -14,7 +14,11 @@ var Todo = mongoose.model('Todo',{
     completedAt: {
         type:Number,
         default:null
+    },
+    _creator: {
+        required:true,
+        type:mongoose.Schema.Types.ObjectId
     }
 });
-
+//we added id to Todo model so that a user can update only his todos by verifying id
 module.exports = {Todo};
