@@ -45,7 +45,7 @@ UserSchema.methods.toJSON = function () {
 UserSchema.methods.generateAuthToken = function () {
     var user  = this;
     var access = 'auth';
-    var token = jwt.sign({_id:user._id.toHexString(), access},'abc123').toString();
+    var token = jwt.sign({_id:user._id.toHexString(), access},process.env.JWT_SECRET).toString();
     user.tokens = user.tokens.concat([{
         access,
         token
@@ -73,7 +73,7 @@ UserSchema.statics.findByToken = function (token)  {
     //we are not adding jwt verify to decoded because if it throws error our var will store error which is wrong so we use try catch
     
     try {
-     decoded = jwt.verify(token,'abc123'); 
+     decoded = jwt.verify(token,process.env.JWT_SECRET); 
     } catch(e) {
 //    return new Promise((resolve,reject) => {
 //        reject();
