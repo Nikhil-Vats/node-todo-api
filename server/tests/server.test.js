@@ -280,4 +280,24 @@ describe('POST /users/login', () => {
        });
 });
     });
+//in above code we are using 2nd obj of users because we want to test that our method adds token. first user already has a token so we test on second
 
+describe('DELETE /users/me/token' , () => {
+   it('should remove auth token on logout', (done) => {
+      request(app)
+      .delete('/users/me/token')
+      .set('x-auth',users[0].tokens[0].token)
+      .expect(200)
+      .end((err,res) => {
+          if(err) {
+              return done(err);
+          }
+      User.findById(users[0]._id).then((user) => {
+          expect(user.tokens.length).toBe(0);
+          
+          done();
+      }).catch((e)=>done(e));
+   }); 
+});
+});
+//in above code we use 1s obj of users array as we want to remove token on logout so 1st user has token
